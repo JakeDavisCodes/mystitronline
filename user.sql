@@ -6,6 +6,9 @@ FLUSH PRIVILEGES;
 
 SHOW GRANTS FOR 'mystique'@localhost;
 
+
+
+
 !! CHANGE 'mystique' FOR CORRECT USERNAME             !!
 !! DO NOT USE 'mystic1' AS THE PASSWORD               !!
 !! HOST WILL NOT BE @localhost ON SERVER APPLICATIONS !!
