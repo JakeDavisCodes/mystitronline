@@ -14,16 +14,22 @@ const functions = {
         pass_hash,
         phone
       };
+      console.log(user);
+      if (username === undefined ||
+          pass_hash === undefined ||
+          phone === undefined) {
+            res.status(400).json({error : 'Username, Password, and Phone required'});
+            return;
+          }
 
-      db.check(user)
+      db.user.check(user)
         .then((result) => {
           if (result) {
-            db.create(user)
-              .then(() => res.sendStatus(200))
+            db.user.create(user)
+              .then(() => res.sendStatus(201))
               .catch((error) => res.status(500).json(error))
           } else {
-            throw new Error('Username or Phone number already in use!');
-            res.sendStatus(409);
+            res.status(409).json({error: 'Username or Phone number already in use!'});
           }
       })
     }

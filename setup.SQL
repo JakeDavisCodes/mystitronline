@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users(
   ID int auto_increment not null,
   username varchar(30) not null,
   pass_hash varchar(255) not null,
-  phone int not null,
+  phone varchar(10) not null,
   created_at timestamp default current_timestamp,
   last_pack timestamp default 0,
 

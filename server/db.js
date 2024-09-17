@@ -18,15 +18,13 @@ pool.getConnection()
 const functions = {
   test: () => conn.query('SELECT * FROM USERS'),
   user: {
-    check: (user) => {
-      conn.query(`SELECT * FROM USERS
+    check: (user) => conn.query(`SELECT * FROM USERS
                   WHERE username = '${user.username}'
-                  OR phone = ${user.phone}`)
-        .then((result) => results.length === 0 ? true : false)
-    },
+                  OR phone = '${user.phone}'`)
+        .then((result) => result.length === 0 ? true : false),
     create: (user) => conn.query(`INSERT INTO users
                                  (username, pass_hash, phone)
-                                 VALUES ('${user.username}', '${user.pass_hash}', ${user.phone})`),
+                                 VALUES ('${user.username}', '${user.pass_hash}', '${user.phone}')`),
   }
 };
 
