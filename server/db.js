@@ -14,3 +14,9 @@ pool.getConnection()
           console.log('connection made')
           connection.query('USE mystitronline')
      })
+
+const functions = {
+  test: () => conn.query('SELECT * FROM USERS')
+};
+
+module.exports = functions;
