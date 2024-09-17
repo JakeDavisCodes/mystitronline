@@ -8,10 +8,10 @@ const functions = {
   },
   user: {
     create: (req, res) =>{
-      const { username, passHash, phone } = req.body
+      const { username, pass_hash, phone } = req.body
       const user = {
         username,
-        passHash,
+        pass_hash,
         phone
       };
 
