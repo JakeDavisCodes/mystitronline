@@ -16,7 +16,18 @@ pool.getConnection()
      })
 
 const functions = {
-  test: () => conn.query('SELECT * FROM USERS')
+  test: () => conn.query('SELECT * FROM USERS'),
+  user: {
+    check: (user) => {
+      conn.query(`SELECT * FROM USERS
+                  WHERE username = '${user.username}'
+                  OR phone = ${user.phone}`)
+        .then((result) => results.length === 0 ? true : false)
+    },
+    create: (user) => {
+
+    },
+  }
 };
 
 module.exports = functions;
