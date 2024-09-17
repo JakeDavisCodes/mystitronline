@@ -15,7 +15,17 @@ const functions = {
         phone
       };
 
-
+      db.check(user)
+        .then((result) => {
+          if (result) {
+            db.create(user)
+              .then(() => res.sendStatus(200))
+              .catch((error) => res.status(500).json(error))
+          } else {
+            throw new Error('Username or Phone number already in use!');
+            res.sendStatus(409);
+          }
+      })
     }
   },
 };
