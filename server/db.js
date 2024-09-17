@@ -24,9 +24,9 @@ const functions = {
                   OR phone = ${user.phone}`)
         .then((result) => results.length === 0 ? true : false)
     },
-    create: (user) conn.query(`INSERT INTO users
-                              (username, pass_hash, phone)
-                              VALUES ('${user.username}', '${user.pass_hash}', ${user.phone})`),
+    create: (user) => conn.query(`INSERT INTO users
+                                 (username, pass_hash, phone)
+                                 VALUES ('${user.username}', '${user.pass_hash}', ${user.phone})`),
   }
 };
 
