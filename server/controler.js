@@ -32,6 +32,16 @@ const functions = {
             res.status(409).json({error: 'Username or Phone number already in use!'});
           }
       })
+    },
+    access: (req, res) =>{
+      const user = {
+        access: req.body.access,
+        pass_hash: req.body.pass_hash
+      };
+
+      db.user.access(user)
+        .then((result) => result.length > 0 ? res.status(201).json(result[0]) : res.status(401).json({error: "Username, Phone, or Password are incorrect"}))
+        .catch((error) => res.status(500).json)
     }
   },
 };

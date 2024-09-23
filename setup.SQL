@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS users(
 CREATE TABLE IF NOT EXISTS cardSets(
   ID int auto_increment not null,
   complete boolean default false,
+  title varchar(30) not null,
 
   primary key(ID)
 );
