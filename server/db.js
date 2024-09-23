@@ -18,6 +18,8 @@ pool.getConnection()
 const functions = {
   test: () => conn.query('SELECT * FROM USERS'),
   user: {
+    packCheck: (uid) => conn.query(`SELECT last_pack FROM USERS
+                                    WHERE ID = ${uid}`),
     access: (user) => conn.query(`SELECT * FROM USERS
                                   WHERE (username = '${user.access}' OR phone = '${user.access}'
                                       AND pass_hash = '${user.pass_hash}')`),

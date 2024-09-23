@@ -33,6 +33,26 @@ CREATE TABLE IF NOT EXISTS cards(
   foreign key(setId) references cardSets(ID)
 );
 
+CREATE TABLE IF NOT EXISTS packs(
+  ID int auto_increment not null,
+  userId int not null,
+  card1 int,
+  card2 int,
+  card3 int,
+  card4 int,
+  card5 int,
+  card6 int,
+
+  primary key(ID),
+  foreign key(userId) references users(ID),
+  foreign key(card1) references cards(ID),
+  foreign key(card2) references cards(ID),
+  foreign key(card3) references cards(ID),
+  foreign key(card4) references cards(ID),
+  foreign key(card5) references cards(ID),
+  foreign key(card6) references cards(ID)
+)
+
 CREATE TABLE IF NOT EXISTS offers(
   ID int auto_increment not null,
   userA_id int not null,

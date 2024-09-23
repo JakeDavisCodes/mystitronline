@@ -44,6 +44,18 @@ const functions = {
         .catch((error) => res.status(500).json)
     }
   },
+  pack: {
+    get: (req, res) =>{
+      const uid = req.body.id;
+
+      db.user.packCheck(uid)
+        .then((result) => {
+          Date.now() - result[0].last_pack > 79200
+            ?
+            :
+        })
+    },
+  }
 };
 
 module.exports = functions;
