@@ -47,7 +47,7 @@ const functions = {
   },
   pack: {
     get: (req, res) =>{
-      const uid = req.body.id;
+      const { uid, pass } = req.body;
 
       db.pack.check(uid)
         .then((result) => {
@@ -61,6 +61,7 @@ const functions = {
   },
   set: {
     complete: (req, res) => {
+      const { uid, pass } = req.body;
 
     }
   }
