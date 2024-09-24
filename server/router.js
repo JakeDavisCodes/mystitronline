@@ -7,5 +7,6 @@ router.get('/test', controler.test);
 router.post('/user/create', controler.user.create)
 router.get('/user/access', controler.user.access)
 router.get('/pack', controler.pack.get)
+router.put('/set/complete', controler.set.complete)
 
 module.exports = router;

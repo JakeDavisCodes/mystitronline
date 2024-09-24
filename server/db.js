@@ -30,6 +30,7 @@ const functions = {
                                  ORDER BY RAND()
                                  LIMIT 6`)
               .then((results) => {
+                if (results.length !== 6) throw new Error('Not enough cards available')
                 cardIds = results.map((i) => i.ID)
                 console.log(cardIds);
 

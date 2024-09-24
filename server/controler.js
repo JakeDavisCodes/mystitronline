@@ -1,5 +1,5 @@
 const db = require('./db.js');
-const { datetime, timestamp } = require('./funcs.js');
+const { datetime } = require('./funcs.js');
 
 const functions = {
   test: (req, res) =>{
@@ -58,6 +58,11 @@ const functions = {
         })
         .catch((err) => res.status(500).json({error:err}))
     },
+  },
+  set: {
+    complete: (req, res) => {
+
+    }
   }
 };
 
