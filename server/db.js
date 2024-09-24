@@ -6,6 +6,8 @@ const pool = mariadb.createPool({
      connectionLimit: 1
 });
 
+const { datetime } = require('./funcs.js');
+
 var conn;
 
 pool.getConnection()
@@ -40,6 +42,9 @@ const functions = {
                                                               SET packId = ${Number(insertResult.insertId)}
                                                               WHERE ID = ${id}`))
                         })
+                        .then(() => conn.query(`UPDATE users
+                                                SET last_pack = '${datetime(Date.now())}'
+                                                WHERE ID = ${uid}`))
               })
     },
   },

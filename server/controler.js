@@ -1,4 +1,5 @@
 const db = require('./db.js');
+const { datetime, timestamp } = require('./funcs.js');
 
 const functions = {
   test: (req, res) =>{
@@ -53,9 +54,9 @@ const functions = {
           if (result.length !== 1) throw new Error('somethin wrong here')
           Date.now() - result[0].last_pack > 79200
             ? db.pack.create(uid).then(() => res.sendStatus(200))
-            : res.status(401).json({error: "Please Wait", time: Date.now() - result[0].last_pack - 79200})
+            : res.status(401).json({error: "Please Wait", time: Date.now() - new Date(result[0].last_pack).getTime() + 79200000})
         })
-        .catch((err) => res.status(404).json({error:err}))
+        .catch((err) => res.status(500).json({error:err}))
     },
   }
 };
