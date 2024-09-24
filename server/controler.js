@@ -48,14 +48,16 @@ const functions = {
   pack: {
     get: (req, res) =>{
       const { uid, pass } = req.body;
-
-      db.pack.check(uid)
-        .then((result) => {
-          if (result.length !== 1) throw new Error('somethin wrong here')
-          Date.now() - result[0].last_pack > 79200
-            ? db.pack.create(uid).then(() => res.sendStatus(200))
-            : res.status(401).json({error: "Please Wait", time: Date.now() - new Date(result[0].last_pack).getTime() + 79200000})
-        })
+      db.user.auth(uid, pass) // ENSURE USER AUTH
+        .then((results) => reults.length > 0
+          ? db.pack.check(uid) // CHECK PACK STATUS
+            .then((result) => {
+              if (result.length !== 1) throw new Error('somethin wrong here')
+              Date.now() - result[0].last_pack > 79200 // IF THEY ARE READY
+                ? db.pack.create(uid).then(() => res.sendStatus(200)) // CREATE A NEW PACK
+                : res.status(401).json({error: "Please Wait", time: Date.now() - new Date(result[0]. last_pack).getTime() + 79200000}) // OR TELL THEM TO WAIT
+            })
+          : res.sendStatus(401))
         .catch((err) => res.status(500).json({error:err}))
     },
   },
@@ -64,7 +66,16 @@ const functions = {
       const { uid, pass } = req.body;
 
     }
+  },
+
+  AUTHEX: () => {
+    const { uid, pass } = req.body;
+      db.user.auth(uid, pass) // ENSURE USER AUTH
+        .then((results) => reults.length > 0
+          ? foo(bar) // ACTION TO RUN
+          : res.sendStatus(401)) // END FOR UNAUTH
   }
+
 };
 
 module.exports = functions;
