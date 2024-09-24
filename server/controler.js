@@ -48,11 +48,11 @@ const functions = {
     get: (req, res) =>{
       const uid = req.body.id;
 
-      db.user.packCheck(uid)
+      db.pack.check(uid)
         .then((result) => {
           Date.now() - result[0].last_pack > 79200
-            ?
-            :
+            ? db.pack.create(uid).then(() => res.sendStatus(200))
+            : res.status(401).json({error: "Please Wait", time: Date.now() - result[0].last_pack - 79200})
         })
     },
   }

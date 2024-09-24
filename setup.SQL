@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS cardSets(
 CREATE TABLE IF NOT EXISTS cards(
   ID int auto_increment not null,
   userId int default null,
+  packId int default null,
   setId int not null,
   title varchar(50) not null,
   num int not null,
@@ -42,6 +43,7 @@ CREATE TABLE IF NOT EXISTS packs(
   card4 int,
   card5 int,
   card6 int,
+  created_at timestamp default current_timestamp,
 
   primary key(ID),
   foreign key(userId) references users(ID),
@@ -51,7 +53,7 @@ CREATE TABLE IF NOT EXISTS packs(
   foreign key(card4) references cards(ID),
   foreign key(card5) references cards(ID),
   foreign key(card6) references cards(ID)
-)
+);
 
 CREATE TABLE IF NOT EXISTS offers(
   ID int auto_increment not null,
