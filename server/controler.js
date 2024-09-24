@@ -50,10 +50,12 @@ const functions = {
 
       db.pack.check(uid)
         .then((result) => {
+          if (result.length !== 1) throw new Error('somethin wrong here')
           Date.now() - result[0].last_pack > 79200
             ? db.pack.create(uid).then(() => res.sendStatus(200))
             : res.status(401).json({error: "Please Wait", time: Date.now() - result[0].last_pack - 79200})
         })
+        .catch((err) => res.status(404).json({error:err}))
     },
   }
 };
