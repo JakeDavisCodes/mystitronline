@@ -48,8 +48,10 @@ const functions = {
   pack: {
     get: (req, res) =>{
       const { uid, pass } = req.body;
+      if (uid === undefined || pass === undefined) { res.status(400).json({error: "missing info"}); return }
+
       db.user.auth(uid, pass) // ENSURE USER AUTH
-        .then((results) => reults.length > 0
+        .then((results) => results.length > 0
           ? db.pack.check(uid) // CHECK PACK STATUS
             .then((result) => {
               if (result.length !== 1) throw new Error('somethin wrong here')
@@ -58,14 +60,17 @@ const functions = {
                 : res.status(401).json({error: "Please Wait", time: Date.now() - new Date(result[0]. last_pack).getTime() + 79200000}) // OR TELL THEM TO WAIT
             })
           : res.sendStatus(401))
-        .catch((err) => res.status(500).json({error:err}))
+        // .catch((err) => res.status(500).json({error:err}))
     },
   },
   set: {
-    complete: (req, res) => {
-      const { uid, pass } = req.body;
-
-    }
+    // complete: (req, res) => {
+    //   const { uid, pass } = req.body;
+    //   db.user.auth(uid, pass) // ENSURE USER AUTH
+    //     .then((results) => reults.length > 0
+    //       ? foo(bar) // ACTION TO RUN
+    //       : res.sendStatus(401)) // END FOR UNAUTH
+    // }
   },
 
   AUTHEX: () => {

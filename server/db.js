@@ -25,10 +25,10 @@ const functions = {
     create: (uid) => {
       let cardIds = [];
       return conn.query(`SELECT ID FROM CARDS
-                                 WHERE userId IS null
-                                 AND packId IS null
-                                 ORDER BY RAND()
-                                 LIMIT 6`)
+                         WHERE userId IS null
+                         AND packId IS null
+                         ORDER BY RAND()
+                         LIMIT 6`)
               .then((results) => {
                 if (results.length !== 6) throw new Error('Not enough cards available')
                 cardIds = results.map((i) => i.ID)
@@ -52,7 +52,7 @@ const functions = {
   user: {
     auth: (uid, pass) => conn.query(`SELECT * FROM USERS
                                      WHERE ID = ${uid}
-                                     AND pass_hash = ${pass}`)
+                                     AND pass_hash = '${pass}'`),
     access: (user) => conn.query(`SELECT * FROM USERS
                                   WHERE (username = '${user.access}' OR phone = '${user.access}'
                                       AND pass_hash = '${user.pass_hash}')`),
