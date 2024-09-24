@@ -1,4 +1,5 @@
 const db = require('./db.js');
+const { datetime } = require('./funcs.js');
 
 const functions = {
   test: (req, res) =>{
@@ -32,8 +33,54 @@ const functions = {
             res.status(409).json({error: 'Username or Phone number already in use!'});
           }
       })
+    },
+    access: (req, res) =>{
+      const user = {
+        access: req.body.access,
+        pass_hash: req.body.pass_hash
+      };
+
+      db.user.access(user)
+        .then((result) => result.length > 0 ? res.status(201).json(result[0]) : res.status(401).json({error: "Username, Phone, or Password are incorrect"}))
+        .catch((error) => res.status(500).json)
     }
   },
+  pack: {
+    get: (req, res) =>{
+      const { uid, pass } = req.body;
+      if (uid === undefined || pass === undefined) { res.status(400).json({error: "missing info"}); return }
+
+      db.user.auth(uid, pass) // ENSURE USER AUTH
+        .then((results) => results.length > 0
+          ? db.pack.check(uid) // CHECK PACK STATUS
+            .then((result) => {
+              if (result.length !== 1) throw new Error('somethin wrong here')
+              Date.now() - result[0].last_pack > 79200 // IF THEY ARE READY
+                ? db.pack.create(uid).then(() => res.sendStatus(200)) // CREATE A NEW PACK
+                : res.status(401).json({error: "Please Wait", time: Date.now() - new Date(result[0]. last_pack).getTime() + 79200000}) // OR TELL THEM TO WAIT
+            })
+          : res.sendStatus(401))
+        // .catch((err) => res.status(500).json({error:err}))
+    },
+  },
+  set: {
+    // complete: (req, res) => {
+    //   const { uid, pass } = req.body;
+    //   db.user.auth(uid, pass) // ENSURE USER AUTH
+    //     .then((results) => reults.length > 0
+    //       ? foo(bar) // ACTION TO RUN
+    //       : res.sendStatus(401)) // END FOR UNAUTH
+    // }
+  },
+
+  AUTHEX: () => {
+    const { uid, pass } = req.body;
+      db.user.auth(uid, pass) // ENSURE USER AUTH
+        .then((results) => reults.length > 0
+          ? foo(bar) // ACTION TO RUN
+          : res.sendStatus(401)) // END FOR UNAUTH
+  }
+
 };
 
 module.exports = functions;
