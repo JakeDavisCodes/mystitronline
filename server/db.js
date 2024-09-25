@@ -83,6 +83,14 @@ const functions = {
                                  (username, pass_hash, phone)
                                  VALUES ('?', '?', '?')`,
                                  [user.username, user.pass_hash, user.phone]),
+  },
+  card: {
+    claim: (uid, cid) => conn.query(`UPDATE cards c
+                                     JOIN packs p ON c.packId = p.ID
+                                     SET c.packId = null, c.userId = ?
+                                     WHERE c.ID = ?
+                                     and p.userId = ?`,
+                                     [uid, cid, uid])
   }
 };
 
