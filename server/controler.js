@@ -1,5 +1,5 @@
 const db = require('./db.js');
-const { datetime } = require('./funcs.js');
+const { datetime, error } = require('./funcs.js');
 
 const functions = {
   test: (req, res) =>{
@@ -74,14 +74,27 @@ const functions = {
   },
   card: {
     claim: (req, res) => {
+      const { uid, pass, cid } = req.body;
 
+      db.user.auth(uid, pass)
+        .then((auth) => auth.length === 1
+          ? db.card.claim(uid, cid)
+            .then((results) => {
+              if (results.affectedRows === 0) {
+                error.cardNotFound('error', res)
+                return;
+              }
+              res.sendStatus(200)
+            })
+            .catch(error.cardNotFound)
+          : res.status(401).json({error: 'no auth'}))
     },
   },
 
   AUTHEX: () => {
     const { uid, pass } = req.body;
       db.user.auth(uid, pass) // ENSURE USER AUTH
-        .then((results) => reults.length > 0
+        .then((results) => results.length > 0
           ? foo(bar) // ACTION TO RUN
           : res.sendStatus(401)) // END FOR UNAUTH
   }

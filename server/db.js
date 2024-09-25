@@ -68,7 +68,7 @@ const functions = {
   user: {
     auth: (uid, pass) => conn.query(`SELECT * FROM USERS
                                      WHERE ID = ?
-                                     AND pass_hash = '?'`,
+                                     AND pass_hash = ?`,
                                      [uid, pass]),
     access: (user) => conn.query(`SELECT * FROM USERS
                                   WHERE (username = '?' OR phone = '?'
