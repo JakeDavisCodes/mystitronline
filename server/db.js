@@ -22,6 +22,13 @@ const functions = {
   pack: {
     check: (uid) => conn.query(`SELECT last_pack FROM USERS
                                 WHERE ID = ${uid}`),
+    prune: (uid) => conn.query(`SELECT * FROM packs
+                                WHERE userId = ${uid}`)
+                      .then((results) => results.forEach((i) => conn.query(`UPDATE cards
+                                                                            SET packId = null
+                                                                            WHERE ID IN (?, ?, ?, ?, ?, ?)`, [i.card1, i.card2, i.card3, i.card4, i.card5, i.card6])
+                                                                    .then(() => conn.query(`DELETE FROM packs
+                                                                                            WHERE ID = ${i.ID}`)))),
     create: (uid) => {
       let cardIds = [];
       return conn.query(`SELECT ID FROM CARDS

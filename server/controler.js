@@ -56,7 +56,7 @@ const functions = {
             .then((result) => {
               if (result.length !== 1) throw new Error('somethin wrong here')
               Date.now() - result[0].last_pack > 79200 // IF THEY ARE READY
-                ? db.pack.create(uid).then(() => res.sendStatus(200)) // CREATE A NEW PACK
+                ? db.pack.prune(uid).then(db.pack.create(uid).then(() => res.sendStatus(200))) // CREATE A NEW PACK
                 : res.status(401).json({error: "Please Wait", time: Date.now() - new Date(result[0]. last_pack).getTime() + 79200000}) // OR TELL THEM TO WAIT
             })
           : res.sendStatus(401))
@@ -71,6 +71,11 @@ const functions = {
     //       ? foo(bar) // ACTION TO RUN
     //       : res.sendStatus(401)) // END FOR UNAUTH
     // }
+  },
+  card: {
+    claim: (req, res) => {
+
+    },
   },
 
   AUTHEX: () => {
