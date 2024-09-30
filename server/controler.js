@@ -92,6 +92,9 @@ const functions = {
             .catch((err) => error.cardNotFound(err, res))
           : res.status(401).json({error: 'no auth'}))
     },
+    unclaim: (req, res) => {
+
+    }
   },
 
   AUTHEX: () => {

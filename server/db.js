@@ -93,7 +93,13 @@ const functions = {
                                      SET c.packId = null, c.userId = ?
                                      WHERE c.ID = ?
                                      and p.userId = ?`,
-                                     [uid, cid, uid])
+                                     [uid, cid, uid]),
+    unClaim: (uid, cid) => conn.query(`UPDATE cards
+                                       SET userId = null
+                                       WHERE userId = ?
+                                       AND ID = ?`,
+                                       [uid, cid])
+
   }
 };
 
