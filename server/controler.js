@@ -92,8 +92,18 @@ const functions = {
             .catch((err) => error.cardNotFound(err, res))
           : res.status(401).json({error: 'no auth'}))
     },
-    unclaim: (req, res) => {
-
+    unClaim: (req, res) => {
+      const { uid, pass, cid } = req.body;
+      db.user.auth(uid, pass) // ENSURE USER AUTH
+        .then((results) => results.length > 0
+          ? db.card.unClaim(uid, cid) // ACTION TO RUN
+            .then((result) => {
+              result.affectedRows === 0
+                ? res.status(400).json({error: 'no card found'})
+                : res.sendStatus(200)
+            })
+            .catch(() => res.sendStatus(500))
+          : res.sendStatus(401)) // END FOR UNAUTH
     }
   },
 
