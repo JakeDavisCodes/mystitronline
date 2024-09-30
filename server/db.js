@@ -105,7 +105,13 @@ const functions = {
                                 FROM cards
                                 WHERE userId = 1
                                 AND setId = 1
-                                AND num BETWEEN 1 AND 9`)
+                                AND num BETWEEN 1 AND 9`),
+    /*
+      So this above is actually pretty cool Jake! Using 'COUNT() AS x
+      after SELECT alows you to count different things, typically this
+      might just return the number of items, but by using DISTINCT, we
+      can count the number of DISTINCT or unique columns!
+    */
     claim: (uid) => conn.query(``)
   }
 };
