@@ -18,7 +18,6 @@ pool.getConnection()
      })
 
 const functions = {
-  test: () => conn.query('SELECT * FROM USERS'),
   pack: {
     check: (uid) => conn.query(`SELECT last_pack FROM USERS
                                 WHERE ID = ?`,
@@ -100,6 +99,14 @@ const functions = {
                                        AND ID = ?`,
                                        [uid, cid])
 
+  },
+  set: {
+    check: (uid) => conn.query(`SELECT COUNT(DISTINCT num) AS cardCount
+                                FROM cards
+                                WHERE userId = 1
+                                AND setId = 1
+                                AND num BETWEEN 1 AND 9`)
+    claim: (uid) => conn.query(``)
   }
 };
 
