@@ -56,7 +56,7 @@ const functions = {
                           cardIds.forEach((id) => conn.query(`UPDATE cards
                                                               SET packId = ?
                                                               WHERE ID = ?`,
-                                                              [packId, id]))
+                                                              [packID, id]))
                         })
                         .then(() => conn.query(`UPDATE users
                                                 SET last_pack = '${datetime(Date.now())}'

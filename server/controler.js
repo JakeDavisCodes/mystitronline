@@ -78,15 +78,18 @@ const functions = {
 
       db.user.auth(uid, pass)
         .then((auth) => auth.length === 1
-          ? db.card.claim(uid, cid)
+          ? db.card.count(uid)
             .then((results) => {
-              if (results.affectedRows === 0) {
-                error.cardNotFound('error', res)
-                return;
-              }
-              res.sendStatus(200)
-            })
-            .catch(error.cardNotFound)
+              if (results.length >= 9) { res.status(401).json({error: "you have too many cards"}); return;}
+              db.card.claim(uid, cid)
+              .then((results) => {
+                if (results.affectedRows === 0) {
+                  error.cardNotFound('error', res)
+                  return;
+                }
+                res.sendStatus(200)
+              })})
+            .catch((err) => error.cardNotFound(err, res))
           : res.status(401).json({error: 'no auth'}))
     },
   },
