@@ -85,6 +85,9 @@ const functions = {
                                  [user.username, user.pass_hash, user.phone]),
   },
   card: {
+    count: (uid) => conn.query(`SELECT * FROM cards
+                                WHERE userId = ?`
+                                , [uid]),
     claim: (uid, cid) => conn.query(`UPDATE cards c
                                      JOIN packs p ON c.packId = p.ID
                                      SET c.packId = null, c.userId = ?
