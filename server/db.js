@@ -52,6 +52,7 @@ const functions = {
                                   cardIds)
                         .then((insertResult) => {
                           const packID = Number(insertResult.insertId)
+                          cardIds.shift();
 
                           cardIds.forEach((id) => conn.query(`UPDATE cards
                                                               SET packId = ?
@@ -117,7 +118,6 @@ const functions = {
     claim: (uid, sid) => conn.query(`UPDATE cards
                                      SET
                                       userId = null,
-                                      packId = null,
                                       completed = true
                                      WHERE setId = ?`,
                                      [sid])

@@ -66,6 +66,7 @@ const functions = {
   set: {
     complete: (req, res) => {
       const { uid, pass, sid } = req.body;
+
       db.user.auth(uid, pass) // ENSURE USER AUTH
         .then((results) => results.length > 0
           ? db.set.check(uid, sid)
