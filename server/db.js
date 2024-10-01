@@ -101,18 +101,29 @@ const functions = {
 
   },
   set: {
-    check: (uid) => conn.query(`SELECT COUNT(DISTINCT num) AS cardCount
-                                FROM cards
-                                WHERE userId = 1
-                                AND setId = 1
-                                AND num BETWEEN 1 AND 9`),
+    check: (uid, sid) => conn.query(`SELECT COUNT(DISTINCT num) AS cardCount
+                                     FROM cards
+                                     WHERE userId = ?
+                                     AND setId = ?
+                                     AND num BETWEEN 1 AND 9`,
+                                     [uid, sid]),
     /*
       So this above is actually pretty cool Jake! Using 'COUNT() AS x
       after SELECT alows you to count different things, typically this
       might just return the number of items, but by using DISTINCT, we
       can count the number of DISTINCT or unique columns!
     */
-    claim: (uid) => conn.query(``)
+    claim: (uid, sid) => conn.query(`UPDATE cards
+                                     SET
+                                      userId = null,
+                                      packId = null,
+                                      complete = true
+                                     WHERE userId = ?`,
+                                     [uid])
+                      .then(() => conn.query(`UPDATE sets
+                                              SET complete = true
+                                              WHERE ID = ?`,
+                                              [sid]))
   }
 };
 
