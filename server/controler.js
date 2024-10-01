@@ -65,10 +65,21 @@ const functions = {
   },
   set: {
     complete: (req, res) => {
-      const { uid, pass } = req.body;
+      const { uid, pass, sid } = req.body;
       db.user.auth(uid, pass) // ENSURE USER AUTH
-        .then((results) => reults.length > 0
-          ? foo(bar) // ACTION TO RUN
+        .then((results) => results.length > 0
+          ? db.set.check(uid, sid)
+              .then((result) => {
+                const cardCount = Number(result[0].cardCount)
+                console.log('set.complete.cardCount ', cardCount)
+
+                cardCount === 9
+                  ? db.set.claim(uid, sid)
+                      .then(() => res.sendStatus(200))
+                  : res.status(400).json({error: 'Could not complete set'})
+                    return;
+              })
+              .catch((error) => res.status(500).json({error: error}))
           : res.sendStatus(401)) // END FOR UNAUTH
     }
   },

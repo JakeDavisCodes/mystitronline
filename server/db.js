@@ -36,6 +36,7 @@ const functions = {
       return conn.query(`SELECT ID FROM CARDS
                          WHERE userId IS null
                          AND packId IS null
+                         AND completed IS false
                          ORDER BY RAND()
                          LIMIT 6`)
               .then((results) => {
@@ -117,13 +118,17 @@ const functions = {
                                      SET
                                       userId = null,
                                       packId = null,
-                                      complete = true
-                                     WHERE userId = ?`,
-                                     [uid])
-                      .then(() => conn.query(`UPDATE sets
-                                              SET complete = true
+                                      completed = true
+                                     WHERE setId = ?`,
+                                     [sid])
+                      .then(() => conn.query(`UPDATE cardSets
+                                              SET completed = true
                                               WHERE ID = ?`,
                                               [sid]))
+                      .then(() => conn.query(`UPDATE users
+                                              SET score = score + 1
+                                              WHERE ID = ?`,
+                                              [uid]))
   }
 };
 
