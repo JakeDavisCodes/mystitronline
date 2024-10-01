@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users(
   phone varchar(10) not null,
   created_at timestamp default current_timestamp,
   last_pack timestamp default 0,
+  score int not null default 0,
 
   primary key(ID)
 );
@@ -28,6 +29,7 @@ CREATE TABLE IF NOT EXISTS cards(
   title varchar(50) not null,
   num int not null,
   rarity varchar(1) not null,
+  completed boolean default false,
 
   primary key(ID),
   foreign key(userId) references users(ID),

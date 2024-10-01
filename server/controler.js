@@ -64,13 +64,13 @@ const functions = {
     },
   },
   set: {
-    // complete: (req, res) => {
-    //   const { uid, pass } = req.body;
-    //   db.user.auth(uid, pass) // ENSURE USER AUTH
-    //     .then((results) => reults.length > 0
-    //       ? foo(bar) // ACTION TO RUN
-    //       : res.sendStatus(401)) // END FOR UNAUTH
-    // }
+    complete: (req, res) => {
+      const { uid, pass } = req.body;
+      db.user.auth(uid, pass) // ENSURE USER AUTH
+        .then((results) => reults.length > 0
+          ? foo(bar) // ACTION TO RUN
+          : res.sendStatus(401)) // END FOR UNAUTH
+    }
   },
   card: {
     claim: (req, res) => {
