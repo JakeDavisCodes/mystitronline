@@ -18,51 +18,117 @@ pool.getConnection()
      })
 
 const functions = {
-  test: () => conn.query('SELECT * FROM USERS'),
   pack: {
     check: (uid) => conn.query(`SELECT last_pack FROM USERS
-                                WHERE ID = ${uid}`),
+                                WHERE ID = ?`,
+                                [uid]),
+    prune: (uid) => conn.query(`SELECT * FROM packs
+                                WHERE userId = ?`,
+                                [uid])
+                      .then((results) => results.forEach((i) => conn.query(`UPDATE cards
+                                                                            SET packId = null
+                                                                            WHERE ID IN (?, ?, ?, ?, ?, ?)`, [i.card1, i.card2, i.card3, i.card4, i.card5, i.card6])
+                                                                    .then(() => conn.query(`DELETE FROM packs
+                                                                                            WHERE ID = ?`,
+                                                                                            [i.ID])))),
     create: (uid) => {
       let cardIds = [];
       return conn.query(`SELECT ID FROM CARDS
                          WHERE userId IS null
                          AND packId IS null
+                         AND completed IS false
                          ORDER BY RAND()
                          LIMIT 6`)
               .then((results) => {
                 if (results.length !== 6) throw new Error('Not enough cards available')
                 cardIds = results.map((i) => i.ID)
-                console.log(cardIds);
+                cardIds.unshift(uid)
+                console.log('UID and CardIDS', cardIds);
 
                 return conn.query(`INSERT INTO packs
                                   (userId, card1, card2, card3, card4, card5, card6)
                                   VALUES
-                                  (${uid}, ${results[0].ID}, ${results[1].ID}, ${results[2].ID}, ${results[3].ID}, ${results[4].ID}, ${results[5].ID})`)
+                                  (?, ?, ?, ?, ?, ?, ?)`,
+                                  cardIds)
                         .then((insertResult) => {
+                          const packID = Number(insertResult.insertId)
+                          cardIds.shift();
+
                           cardIds.forEach((id) => conn.query(`UPDATE cards
-                                                              SET packId = ${Number(insertResult.insertId)}
-                                                              WHERE ID = ${id}`))
+                                                              SET packId = ?
+                                                              WHERE ID = ?`,
+                                                              [packID, id]))
                         })
                         .then(() => conn.query(`UPDATE users
                                                 SET last_pack = '${datetime(Date.now())}'
-                                                WHERE ID = ${uid}`))
+                                                WHERE ID = ?`,
+                                                [uid]))
               })
     },
   },
   user: {
     auth: (uid, pass) => conn.query(`SELECT * FROM USERS
-                                     WHERE ID = ${uid}
-                                     AND pass_hash = '${pass}'`),
+                                     WHERE ID = ?
+                                     AND pass_hash = ?`,
+                                     [uid, pass]),
     access: (user) => conn.query(`SELECT * FROM USERS
-                                  WHERE (username = '${user.access}' OR phone = '${user.access}'
-                                      AND pass_hash = '${user.pass_hash}')`),
+                                  WHERE (username = '?' OR phone = '?'
+                                      AND pass_hash = '?')`,
+                                      [user.access, user.access, user.pass_hash]),
     check: (user) => conn.query(`SELECT * FROM USERS
-                                 WHERE username = '${user.username}'
-                                 OR phone = '${user.phone}'`)
+                                 WHERE username = '?'
+                                 OR phone = '?'`,
+                                 [user.username, user.phone])
         .then((result) => result.length === 0 ? true : false),
     create: (user) => conn.query(`INSERT INTO users
                                  (username, pass_hash, phone)
-                                 VALUES ('${user.username}', '${user.pass_hash}', '${user.phone}')`),
+                                 VALUES ('?', '?', '?')`,
+                                 [user.username, user.pass_hash, user.phone]),
+  },
+  card: {
+    count: (uid) => conn.query(`SELECT * FROM cards
+                                WHERE userId = ?`
+                                , [uid]),
+    claim: (uid, cid) => conn.query(`UPDATE cards c
+                                     JOIN packs p ON c.packId = p.ID
+                                     SET c.packId = null, c.userId = ?
+                                     WHERE c.ID = ?
+                                     and p.userId = ?`,
+                                     [uid, cid, uid]),
+    unClaim: (uid, cid) => conn.query(`UPDATE cards
+                                       SET userId = null
+                                       WHERE userId = ?
+                                       AND ID = ?`,
+                                       [uid, cid])
+
+  },
+  set: {
+    check: (uid, sid) => conn.query(`SELECT COUNT(DISTINCT num) AS cardCount
+                                     FROM cards
+                                     WHERE userId = ?
+                                     AND setId = ?
+                                     AND num BETWEEN 1 AND 9`,
+                                     [uid, sid]),
+    /*
+      So this above is actually pretty cool Jake! Using 'COUNT() AS x
+      after SELECT alows you to count different things, typically this
+      might just return the number of items, but by using DISTINCT, we
+      can count the number of DISTINCT or unique columns!
+    */
+    claim: (uid, sid) => conn.query(`UPDATE cards
+                                     SET
+                                      userId = null,
+                                      completed = true
+                                     WHERE setId = ?`,
+                                     [sid])
+                      .then(() => conn.query(`UPDATE cardSets
+                                              SET completed = true
+                                              WHERE ID = ?`,
+                                              [sid]))
+                      .then(() => conn.query(`UPDATE users
+                                              SET score = score + 1
+                                              WHERE ID = ?`,
+                                              [uid]))
   }
 };
 
